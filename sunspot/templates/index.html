@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <h2>Welcome to Sunspot</h2>
+
+  <p>An app for solar activity and solar rotation class projects.</p>
+
+  <form method="POST" class="form-inline">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      {{ form.year.label }}
+      {{ form.year(class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.month.label }}
+      {{ form.month(class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.day.label }}
+      {{ form.day(class="form-control") }}
+    </div>
+    {{ form.submit(class="btn btn-default") }}
+  </form>
+  {% if img %}
+    <img class="img-responsive" style="padding-top:10px;" src="{{ img }}">
+  {% else %}
+    <p class="text-danger">No image found for this date.</p>
+  {% endif %}
+
+{% endblock %}

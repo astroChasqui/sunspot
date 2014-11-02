@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <h2>Instructor Page</h2>
+
+  <form method="POST" class="form">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      {{ form.number_of_students.label }}
+      {{ form.number_of_students(class="form-control") }}
+      {% for error in form.number_of_students.errors %}
+           <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
+    <div class="form-group">
+      {{ form.dates_per_student.label }}
+      {{ form.dates_per_student(class="form-control") }}
+      {% for error in form.dates_per_student.errors %}
+           <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+    </div>
+    {% if ssn_fig %}
+      <div class="form-group">
+        <p>This is how the result of this project should look like:</p>
+        <img  class="img-responsive" src="{{ ssn_fig }}">
+        <p>If you are happy with it, check the generate files option below.
+           Otherwise resubmit or change the number of dates per student.</p>
+      </div>
+      <div class="form-group">
+        {{ form.generate_csv.label(class="checkbox-inline") }}
+        {{ form.generate_csv(class="checkbox-inline") }}
+      </div>
+    {% endif %}
+    {{ form.submit(class="btn") }}
+  </form>
+
+  <p>?1a? Upload student roster</p>
+
+  <p>2. How many dates per student? Suggested = XXX</p>
+
+  <p>3. Generate CSV with actual SSN and show graph with PDF link</p>
+
+  <p>4. Rotation project. Pick one of these X options, or assign them to different groups?</p>
+
+{% endblock %}
