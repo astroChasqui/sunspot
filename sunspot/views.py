@@ -3,6 +3,7 @@ from forms import DateForm, InstructorForm, StudentForm
 import datetime
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'manchas solares'
@@ -89,7 +90,10 @@ def instructor():
             xf = datetime.date(2013, 9, 30)
             dd = (xf - xi)/(ns * dps)
             dates = [xi + i*dd for i in range(ns*dps)]
-            ssd = np.genfromtxt('ISSN_D_tot.csv', delimiter=',').transpose()
+            ssn_file = os.path.join(
+                         os.path.dirname(os.path.realpath(__file__)),
+                         'ISSN_D_tot.csv')
+            ssd = np.genfromtxt(ssn_file, delimiter=',').transpose()
             ssn = [str(get_ssn(dates[i], ssd)) for i in range(ns*dps)]
             plt.figure(figsize=(5,4))
             plt.plot(dates, ssn, 'bo')
@@ -97,13 +101,16 @@ def instructor():
             plt.ylabel('Sunspot number')
             plt.ylim(0., 200.)
             plt.tight_layout()
-            ssn_fig = 'static/ssn.png'
+            ssn_fig = os.path.join(
+                        os.path.dirname(os.path.realpath(__file__)),
+                        'static', 'ssn.png')
+            return ssn_fig
             plt.savefig(ssn_fig)
             plt.close()
             session['number_of_students'] = ns
             session['students'] = [str(i+1) for i in range(ns)]
             session['dates_per_student'] = dps
-            session['ssn_fig'] = ssn_fig
+            session['ssn_fig'] = 'static/ssn.png'
             session['dates'] = [date.toordinal() for date in dates]
             session['ssn'] = ssn
             return redirect(url_for('instructor'))
