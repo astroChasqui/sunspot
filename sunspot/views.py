@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session,\
+                  send_file
 from forms import DateForm, InstructorForm, StudentForm
 import datetime
 import numpy as np
@@ -9,6 +10,8 @@ import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'manchas solares'
+
+fpath = os.path.dirname(os.path.realpath(__file__))
 
 # Uncomment at deploy
 '''
@@ -81,19 +84,19 @@ def instructor():
                 y = ["{0},{1}\n".format(d, s)
                      for d, s in zip(dates, students)]
                 fname = session.get('fname').split('.')[0]
-                ifname = os.path.join(
-                                  os.path.dirname(os.path.realpath(__file__)),
-                                  'static', 'files', fname+'i.csv'
-                                  )
-                sfname = os.path.join(
-                                  os.path.dirname(os.path.realpath(__file__)),
-                                  'static', 'files', fname+'s.csv'
-                                  )
+                ifname = os.path.join(fpath, 'static', 'files', fname+'i.csv')
+                sfname = os.path.join(fpath, 'static', 'files', fname+'s.csv')
                 with open(ifname, 'w') as csv:
-                    csv.write(''.join(x))
+                    csv.write('Date,Official SSN,Student\n'+''.join(x))
                 with open(sfname, 'w') as csv:
-                    csv.write(''.join(y))
-                return "Success!"
+                    csv.write('Date,Student\n'+''.join(y))
+                figname = os.path.join(fpath, 'static', 'files', fname+'.png')
+                zname = os.path.join(fpath, 'static', 'files', fname+'.zip')
+                os.system("zip -j {0} {1} {2} {3}".\
+                          format(zname, ifname, sfname,figname))
+                return send_file(zname, as_attachment=True,
+                                 attachment_filename="sunspot_project.zip")
+            
             ns = form.number_of_students.data
             dps = form.dates_per_student.data
             nd = np.random.random_integers(-7, 7)
@@ -101,9 +104,7 @@ def instructor():
             xf = datetime.date(2013, 9, 30)
             dd = (xf - xi)/(ns * dps)
             dates = [xi + i*dd for i in range(ns*dps)]
-            ssn_file = os.path.join(
-                         os.path.dirname(os.path.realpath(__file__)),
-                         'ISSN_D_tot.csv')
+            ssn_file = os.path.join(fpath, 'ISSN_D_tot.csv')
             ssd = np.genfromtxt(ssn_file, delimiter=',').transpose()
             ssn = [str(get_ssn(dates[i], ssd)) for i in range(ns*dps)]
             plt.figure(figsize=(5,4))
@@ -113,9 +114,7 @@ def instructor():
             plt.ylim(0., 200.)
             plt.tight_layout()
             fname = datetime.datetime.now().strftime("%Y%m%d-%H%M%S.png")
-            ssn_fig = os.path.join(
-                        os.path.dirname(os.path.realpath(__file__)),
-                        'static', 'files', fname)
+            ssn_fig = os.path.join(fpath, 'static', 'files', fname)
             plt.savefig(ssn_fig)
             plt.close()
             session['number_of_students'] = ns
