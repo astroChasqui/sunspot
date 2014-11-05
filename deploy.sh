@@ -3,7 +3,7 @@
 # 1. Create sunspot app on Webfaction
 # 2. Source this code
 # 3. Upload sunspot app
-# 4. Edit sunspot/__init__.py and sunspot/sunspot.py
+# 4. Edit sunspot/__init__.py and sunspot/views.py
 #
 # Had to pip install flask and extensions in python2.7 env (tricky!)
 #

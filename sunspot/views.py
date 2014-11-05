@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from forms import DateForm, InstructorForm, StudentForm
 import datetime
 import numpy as np
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import os
 
@@ -78,9 +80,18 @@ def instructor():
                      for d, s, st in zip(dates, students, ssn)]
                 y = ["{0},{1}\n".format(d, s)
                      for d, s in zip(dates, students)]
-                with open('instructor.csv', 'w') as csv:
+                fname = session.get('fname').split('.')[0]
+                ifname = os.path.join(
+                                  os.path.dirname(os.path.realpath(__file__)),
+                                  'static', 'files', fname+'i.csv'
+                                  )
+                sfname = os.path.join(
+                                  os.path.dirname(os.path.realpath(__file__)),
+                                  'static', 'files', fname+'s.csv'
+                                  )
+                with open(ifname, 'w') as csv:
                     csv.write(''.join(x))
-                with open('students.csv', 'w') as csv:
+                with open(sfname, 'w') as csv:
                     csv.write(''.join(y))
                 return "Success!"
             ns = form.number_of_students.data
@@ -101,16 +112,17 @@ def instructor():
             plt.ylabel('Sunspot number')
             plt.ylim(0., 200.)
             plt.tight_layout()
+            fname = datetime.datetime.now().strftime("%Y%m%d-%H%M%S.png")
             ssn_fig = os.path.join(
                         os.path.dirname(os.path.realpath(__file__)),
-                        'static', 'ssn.png')
-            return ssn_fig
+                        'static', 'files', fname)
             plt.savefig(ssn_fig)
             plt.close()
             session['number_of_students'] = ns
             session['students'] = [str(i+1) for i in range(ns)]
             session['dates_per_student'] = dps
-            session['ssn_fig'] = 'static/ssn.png'
+            session['ssn_fig'] = 'static/files/'+fname
+            session['fname'] = fname
             session['dates'] = [date.toordinal() for date in dates]
             session['ssn'] = ssn
             return redirect(url_for('instructor'))

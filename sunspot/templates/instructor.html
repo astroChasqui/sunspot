@@ -4,6 +4,8 @@
 
   <h2>Instructor Page</h2>
 
+  <h3>Part 1: Solar cycle</h3>
+
   <form method="POST" class="form">
     {{ form.hidden_tag() }}
     <div class="form-group">
@@ -24,8 +26,11 @@
       <div class="form-group">
         <p>This is how the result of this project should look like:</p>
         <img  class="img-responsive" src="{{ ssn_fig }}">
-        <p>If you are happy with it, check the generate files option below.
-           Otherwise resubmit or change the number of dates per student.</p>
+        <p>If you are happy with it, check the generate files option below to
+           continue. If not, click Submit without checking the box (new
+           random dates will be used) or change the number of dates per
+           student.
+        </p>
       </div>
       <div class="form-group">
         {{ form.generate_csv.label(class="checkbox-inline") }}
@@ -35,12 +40,8 @@
     {{ form.submit(class="btn") }}
   </form>
 
-  <p>?1a? Upload student roster</p>
+  <h3>Part 2: Sun's rotation</h3>
 
-  <p>2. How many dates per student? Suggested = XXX</p>
-
-  <p>3. Generate CSV with actual SSN and show graph with PDF link</p>
-
-  <p>4. Rotation project. Pick one of these X options, or assign them to different groups?</p>
+  <p>Pick one of these X options, or assign them to different groups?</p>
 
 {% endblock %}

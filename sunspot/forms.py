@@ -1,6 +1,6 @@
 from flask.ext.wtf import Form
 from wtforms import SelectField, SubmitField, IntegerField, BooleanField, FieldList, FormField
-from wtforms.validators import InputRequired
+from wtforms.validators import InputRequired, NumberRange
 
 
 class DateForm(Form):
@@ -14,16 +14,19 @@ class DateForm(Form):
 
 class InstructorForm(Form):
     number_of_students = IntegerField('How many students do you have?',
-                                      validators=[InputRequired()])
+                                      validators=[InputRequired(),
+                                                  NumberRange(5, 100)])
     dates_per_student = IntegerField('How many pictures would you like '+
                                      'each student to work on?',
-                                      validators=[InputRequired()])
+                                      validators=[InputRequired(),
+                                                  NumberRange(1, 10)])
     generate_csv = BooleanField('Generate files')
     submit = SubmitField('Submit')
 
 class StudentForm(Form):
     number_of_dates = IntegerField('How many dates were you assigned?',
-                                   validators=[InputRequired()])
+                                   validators=[InputRequired(),
+                                               NumberRange(1, 10)])
     submit = SubmitField('Submit')
     dates = FieldList(FormField(DateForm))
 
