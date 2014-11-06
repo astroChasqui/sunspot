@@ -41,6 +41,8 @@ def index():
     else:
         session.clear()
         img = get_img(date)
+        if not img:
+            img = get_img(date - datetime.timedelta(days=1))
         return render_template('index.html', form = form,
                                date = date, img = img)
 
@@ -51,11 +53,15 @@ def student():
         if form.validate_on_submit():
             session['number_of_dates'] = form.number_of_dates.data
             if form.dates:
+                dates = []
                 images = []
                 for date in form.dates:
-                    images.append(get_img(datetime.date(date.year.data,
-                                                        date.month.data,
-                                                        date.day.data)))
+                    datex = datetime.date(date.year.data,
+                                          date.month.data,
+                                          date.day.data)
+                    dates.append(datex.toordinal())
+                    images.append(get_img(datex))
+                session["dates"] = dates
                 session["images"] = images
                 return redirect(url_for('student'))
             return redirect(url_for('student'))
@@ -65,8 +71,16 @@ def student():
         if session.get('number_of_dates'):
             form.add_dates(session.get('number_of_dates'))
         form.number_of_dates.data = session.get('number_of_dates')
+        if session.get('dates'):
+            dates = [datetime.date.fromordinal(date)
+                     for date in session.get('dates')]
+        else:
+            dates = None
         images = session.get('images')
-        return render_template('student.html', form = form, images=images)
+        if images:
+            images = zip(dates, images)
+        return render_template('student.html', form = form,
+                               images = images)
 
 @app.route('/instructor', methods=['GET', 'POST'])
 def instructor():
@@ -94,6 +108,12 @@ def instructor():
                 zname = os.path.join(fpath, 'static', 'files', fname+'.zip')
                 os.system("zip -j {0} {1} {2} {3}".\
                           format(zname, ifname, sfname,figname))
+                os.system("printf '@ "+fname+\
+                          "i.csv\n@=instructor.csv\n' | zipnote -w "+zname)
+                os.system("printf '@ "+fname+\
+                          "s.csv\n@=students.csv\n' | zipnote -w "+zname)
+                os.system("printf '@ "+fname+\
+                          ".png\n@=date_vs_ssn.png\n' | zipnote -w "+zname)
                 return send_file(zname, as_attachment=True,
                                  attachment_filename="sunspot_project.zip")
             
@@ -134,6 +154,12 @@ def instructor():
         ssn_fig = session.get('ssn_fig')
         return render_template('instructor.html', form = form,
                                ssn_fig = ssn_fig)
+
+
+@app.route('/help')
+def help():
+    return render_template('help.html')
+
 
 import httplib
 def exists(site, path):

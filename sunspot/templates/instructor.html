@@ -22,26 +22,31 @@
            <div class="text-danger">{{ error }}</div>
       {% endfor %}
     </div>
+    {{ form.submit(class="btn") }}
     {% if ssn_fig %}
+      <br>
       <div class="form-group">
         <p>This is how the result of this project should look like:</p>
         <img  class="img-responsive" src="{{ ssn_fig }}">
         <p>If you are happy with it, check the generate files option below to
            continue. If not, click Submit without checking the box (new
-           random dates will be used) or change the number of dates per
+           random dates will be used) or change the number of pictures per
            student.
         </p>
       </div>
       <div class="form-group">
         {{ form.generate_csv.label(class="checkbox-inline") }}
-        {{ form.generate_csv(class="checkbox-inline") }}
+        {{ form.generate_csv(class="checkbox-inline",
+                             onclick="x = document.getElementById('download');\
+                                      if (this.checked)\
+                                        x.value='Download zip file';\
+                                      else\
+                                        x.value='Submit';") }}
       </div>
+      {{ form.submit(class="btn", id="download") }}
     {% endif %}
-    {{ form.submit(class="btn") }}
   </form>
 
   <h3>Part 2: Sun's rotation</h3>
-
-  <p>Pick one of these X options, or assign them to different groups?</p>
 
 {% endblock %}

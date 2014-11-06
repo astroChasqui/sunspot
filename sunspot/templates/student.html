@@ -20,7 +20,6 @@
       <p>Enter the dates:</p>
       {% for date in form.dates %}
         {{ date.hidden_tag() }}
-        {{ date.id }}
         <div class="form-group">
         {{ date.year(class="form-control") }}
         </div>
@@ -37,17 +36,30 @@
   </form>
 
   {% if images %}
-    {% for img in images %}
-      {% if img %}
-        <img class="img-responsive" style="padding-top:10px;" src="{{ img }}">
-      {% else %}
-        <p class="text-danger">No image found for this date.</p>
-      {% endif %}
-    {% endfor %}
+      {% for dt, img in images %}
+      <br>
+      <table class="table table-bordered">
+        <tr><td>Date</td><td class="warning">{{ dt }}</td></tr>
+        <tr><td>Number of groups (g)</td><td class="warning"></td></tr>
+        <tr><td>Number of spots (s)</td><td class="warning"></td></tr>
+        <tr><td>Sunspot number (10g + s)</td><td class="warning"></td></tr>
+        <tr>
+          {% if img %}
+            <td colspan=2 align="center">
+              <img class="img-responsive" style="padding-top:10px;"
+                   src="{{ img }}">
+            </td>
+          {% else %}
+            <td class="text-danger" colspan=2>
+              No image found for this date.
+            </td>
+          {% endif %}
+        </tr>
+      </table>
+      {% endfor %}
+    
   {% endif %}
 
   <h3>Part 2: Sun's rotation</h3>
-
-  <p>1. Download PDF</p>
 
 {% endblock %}
